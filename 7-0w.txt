@@ -1,0 +1,69 @@
+'''
+차 경주
+'''
+from turtle import *
+import random
+import time
+
+class Car:
+    def __init__(self, speed, color, fname, x, y, finish_line):
+        self.speed = speed
+        self.color = color
+        self.turtle = Turtle()
+        self.turtle.shape(fname)
+        self.turtle.color(self.color)
+        self.turtle.penup()
+        self.turtle.goto(x, y)  # 시작점 좌표 설정
+        self.finish_line = finish_line
+        self.finished = False  # 결승선을 통과했는지 확인용
+
+    def move(self):
+        if self.finished:
+            return False  # 이미 결승선을 통과했으면 멈춤
+    
+        self.turtle.forward(self.speed)  # 차가 현재 속도로 이동
+
+        if self.turtle.xcor() >= self.finish_line:
+            self.finished = True  # 결승선 도착하면 상태 변경
+            return True  # 결승선 통과 상태 반환
+
+        return False
+
+# shape로 차 등록
+register_shape("car1.gif")
+register_shape("car2.gif")
+register_shape("car.gif")
+
+# 도착 지점 설정
+finish_line = 300
+
+# 객체를 리스트로 생성
+cars = [
+    Car(random.randint(10, 30), "blue", "car1.gif", -300, 150, finish_line),
+    Car(random.randint(10, 30), "red", "car2.gif", -300, 0, finish_line),
+    Car(random.randint(10, 30), "white", "car.gif", -300, -150, finish_line)
+]
+
+ranking = []  # 등수 기록 리스트
+
+# 경주 시작
+while len(ranking) < len(cars):  # 모든 차가 결승선에 도달할 때까지 실행
+    for car in cars:
+        if car not in ranking:  # 결승선 도착할때 까지 계속 경주
+            if car.move():
+                ranking.append(car)  # 도착하면 등수 리스트에 추가
+
+# 등수 출력
+pen = Turtle()
+pen.hideturtle()
+pen.penup()
+pen.goto(-100, -200)
+pen.write("🏁 레이스 결과 🏁", align="left", font=("Arial", 16, "bold"))
+
+for i in range(len(ranking)):
+    car = ranking[i]
+    pen.goto(-100, -230 - (i * 30))
+    pen.write(str(i + 1) + "등: " + car.color + " 자동차", align="left", font=("Arial", 14, "normal"))
+
+
+done()
